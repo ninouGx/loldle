@@ -81,8 +81,8 @@ def prompt_comparison_result(
     Prompt user to enter a comparison result.
 
     Accepts either:
-    - Emoji string (🟩🟥🟧⬇️⬆️)
-    - Number string (0-4 for each category)
+    - Emoji string (🟩🟧🟥⬇️⬆️)
+    - Number string (0=🟩 1=🟧 2=🟥 3=⬇️ 4=⬆️)
 
     Args:
         character_name: Name of the character being compared
@@ -95,7 +95,7 @@ def prompt_comparison_result(
         try:
             prompt_text = (
                 f"\n[cyan]Enter result for {character_name}[/cyan]\n"
-                f"(Use emojis 🟩🟥🟧⬇️⬆️ or numbers 0-4)"
+                f"(Emojis: 🟩🟧🟥⬇️⬆️ or Numbers: 0=🟩 1=🟧 2=🟥 3=⬇️ 4=⬆️)"
             )
             user_input = Prompt.ask(prompt_text).strip()
 

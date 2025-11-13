@@ -1,0 +1,8 @@
+# Web Scraping Dependencies
+# ==========================
+
+# Selenium for browser automation
+selenium>=4.15.0
+
+# Automatic webdriver management
+webdriver-manager>=4.0.0

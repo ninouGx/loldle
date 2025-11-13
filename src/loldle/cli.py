@@ -50,23 +50,31 @@ def main() -> None:
 @click.option(
     "--mode",
     type=click.Choice(["classic", "assisted", "online-helper"]),
-    default="classic",
-    help="Game mode to play",
+    default=None,
+    help="Game mode (interactive if not specified)",
 )
 @click.option(
     "--show-legend/--no-legend",
     default=True,
     help="Show match symbol legend at start",
 )
-def play(mode: str, show_legend: bool) -> None:
+def play(mode: str | None, show_legend: bool) -> None:
     """
     Play Loldle in various modes.
 
     \b
-    Modes:
-    - classic: Play the game yourself without assistance
-    - assisted: Get AI recommendations during the game
-    - online-helper: Help you play on loldle.net by suggesting moves
+    MODES (choose interactively or use --mode):
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    1. classic        - Play yourself without help
+    2. assisted       - Get AI-powered optimal move suggestions
+    3. online-helper  - Interactive helper for loldle.net
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    \b
+    EXAMPLES:
+      loldle play                          # Interactive mode selection
+      loldle play --mode assisted          # Direct to assisted mode
+      loldle play --mode online-helper     # Direct to online helper
     """
     try:
         game = LoldleGame()
@@ -74,8 +82,32 @@ def play(mode: str, show_legend: bool) -> None:
         print_error(f"Failed to load game data: {e}")
         sys.exit(1)
 
-    clear_screen()
-    print_welcome_message(game.get_game_name())
+    # If no mode specified, prompt user interactively
+    if mode is None:
+        clear_screen()
+        print_welcome_message(game.get_game_name())
+
+        console.print("\n[bold cyan]Select Game Mode:[/bold cyan]")
+        console.print("  [bold]1.[/bold] Classic - Play yourself")
+        console.print("  [bold]2.[/bold] Assisted - Get AI recommendations")
+        console.print("  [bold]3.[/bold] Online Helper - Help for loldle.net (interactive)")
+
+        from loldle.ui.input import prompt_choice
+
+        mode_options = ["classic", "assisted", "online-helper"]
+        choice_idx = prompt_choice(
+            mode_options,
+            "Enter your choice (1-3)",
+            show_numbers=False,
+        )
+
+        if choice_idx is None:
+            return
+
+        mode = mode_options[choice_idx]
+    else:
+        clear_screen()
+        print_welcome_message(game.get_game_name())
 
     if show_legend:
         print_match_legend()

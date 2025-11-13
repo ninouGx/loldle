@@ -1,0 +1,22 @@
+# Loldle Solver 2.0 - Core Dependencies
+# =====================================
+
+# CLI Framework
+click>=8.1.0
+
+# Beautiful Terminal Output
+rich>=13.0.0
+
+# Numerical Computations
+numpy>=1.24.0
+
+# HTTP Requests
+requests>=2.31.0
+
+# HTML/XML Parsing
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Optional: Web Scraping (install with: pip install -r requirements.txt -r requirements-scraper.txt)
+# selenium>=4.15.0
+# webdriver-manager>=4.0.0
