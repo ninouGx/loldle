@@ -78,6 +78,9 @@ loldle solve
 
 # Show game statistics
 loldle info
+
+# Refresh champion data from online sources
+loldle refresh-data
 ```
 
 ---
@@ -203,9 +206,11 @@ Adding a new game variant (e.g., Pokedle) requires only:
 
 The entropy solver and UI automatically work with the new game!
 
+**See [ADDING_VARIANTS.md](ADDING_VARIANTS.md) for a complete step-by-step guide.**
+
 ---
 
-## 📁 Data
+## 📁 Data & Auto-Refresh
 
 Champion data is stored in `Data/champions_data.csv`:
 
@@ -215,7 +220,28 @@ Aatrox;Male;Top;Darkin;Manaless;Melee;Runeterra,Shurima;2013
 Ahri;Female;Middle;Vastayan;Mana;Ranged;Ionia;2011
 ```
 
-**Current data**: 164 champions (as of 2023)
+**Current data**: 163 champions (auto-updated from community sources)
+
+### Refreshing Data
+
+The tool can automatically refresh champion data from online sources:
+
+```bash
+# Refresh from community GitHub repositories (recommended)
+loldle refresh-data
+
+# Use a specific source
+loldle refresh-data --source github
+
+# Refresh without backing up old data
+loldle refresh-data --no-backup
+```
+
+**Data sources:**
+- Community GitHub: [joulsen/loldle-information-theory](https://github.com/joulsen/loldle-information-theory)
+- Fallback scrapers for loldle.net
+
+The data is automatically backed up before updating, so you can always revert if needed
 
 ---
 
@@ -321,16 +347,23 @@ Contributions welcome! The new architecture makes it easy to:
 
 ---
 
-## 🎯 Future Enhancements
+## 🎯 Recent Enhancements & Roadmap
 
-- [ ] Add Pokemon variant (Pokedle)
-- [ ] Add Dota variant (Dotadle)
+### ✅ Recently Added
+- [x] **Auto-refresh data** from community sources
+- [x] Multi-source data fetching (GitHub, scraper fallbacks)
+- [x] Automatic data backups before updates
+- [x] Framework for adding new game variants
+- [x] Complete variant addition guide
+
+### 🔮 Future Enhancements
+- [ ] Add Pokemon variant (Pokedle) - framework ready!
+- [ ] Add Dota variant (Dotadle) - framework ready!
 - [ ] Implement async data fetching
 - [ ] Add comprehensive test suite
 - [ ] Create web UI version
-- [ ] Add statistics tracking
+- [ ] Add statistics tracking (win rate, average guesses)
 - [ ] Implement different solving strategies
-- [ ] Automate data updates
 - [ ] Publish to PyPI
 
 ---

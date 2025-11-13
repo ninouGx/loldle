@@ -376,5 +376,84 @@ def info() -> None:
     console.print(f"Oldest champion: {min(champions, key=lambda c: c.release_year).name}")
 
 
+@main.command("refresh-data")
+@click.option(
+    "--source",
+    type=click.Choice(["auto", "github", "scraper"]),
+    default="auto",
+    help="Data source to use",
+)
+@click.option(
+    "--backup/--no-backup",
+    default=True,
+    help="Backup existing data before refresh",
+)
+def refresh_data(source: str, backup: bool) -> None:
+    """
+    Refresh champion data from online sources.
+
+    This command fetches the latest champion data and updates your local CSV file.
+    By default, it backs up the existing data before updating.
+
+    \b
+    Sources:
+    - auto: Try all sources automatically (recommended)
+    - github: Use community GitHub repositories
+    - scraper: Scrape directly from loldle.net (may be slower)
+    """
+    from datetime import datetime
+    from pathlib import Path
+
+    from loldle.data.sources import fetch_champions_from_best_source
+    from loldle.utils.constants import DATA_DIR
+
+    console.print("\n[bold cyan]Refreshing champion data...[/bold cyan]\n")
+
+    # Backup existing data
+    data_file = DATA_DIR / "champions_data.csv"
+    if backup and data_file.exists():
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_file = DATA_DIR / f"champions_data.backup_{timestamp}.csv"
+        try:
+            import shutil
+
+            shutil.copy2(data_file, backup_file)
+            console.print(f"[dim]Backed up existing data to: {backup_file.name}[/dim]\n")
+        except Exception as e:
+            print_warning(f"Could not create backup: {e}")
+
+    # Fetch new data
+    try:
+        if source == "auto" or source == "github":
+            console.print("[cyan]Fetching from community GitHub repositories...[/cyan]")
+            champions = fetch_champions_from_best_source(verbose=True)
+
+        elif source == "scraper":
+            console.print("[cyan]Scraping data from loldle.net...[/cyan]")
+            from loldle.data.scraper import scrape_loldle_data
+
+            champions = scrape_loldle_data(verbose=True, save=False)
+
+        else:
+            print_error(f"Unknown source: {source}")
+            sys.exit(1)
+
+        # Save to CSV
+        from loldle.data.loader import save_champions_to_csv
+
+        save_champions_to_csv(champions, data_file, overwrite=True)
+
+        print_success(f"\n✓ Successfully updated data with {len(champions)} champions!")
+        console.print(f"[dim]Data saved to: {data_file}[/dim]")
+
+        # Show what changed
+        if backup:
+            console.print("\n[bold]You can run 'loldle info' to see the updated statistics.[/bold]")
+
+    except Exception as e:
+        print_error(f"Failed to refresh data: {e}")
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     main()
